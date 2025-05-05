@@ -2,15 +2,10 @@
   <img src="https://readme-typing-svg.herokuapp.com?color=00ffaa&size=35&width=900&height=80&lines=⚙️+PyEveryday+-+Automate+Your+Everyday+Tasks+with+Python!"/>
 </div>
 
-<p align="center">
-  <img src="PyEveryday.png" alt="Project Logo" width="150" height="150" />
-</p>
 
-
-
-🔗 Explore the repository: [PyEveryday GitHub Repo](https://github.com/yourusername/pyeveryday)  
 <br>
-A collection of Python scripts that simplify everyday tasks—file management, productivity boosters, data tools, automation hacks, and more.
+
+### A collection of Python scripts that simplify everyday tasks—file management, productivity boosters, data tools, automation hacks, and more.
 
 ---
 
