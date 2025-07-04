@@ -1,6 +1,7 @@
 import datetime
 import sys
 
+
 class AgeCalculator:
     def __init__(self):
         self.months_in_year = 12
