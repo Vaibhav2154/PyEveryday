@@ -90,7 +90,7 @@ const floatingParticles = Array.from({ length: 20 }, (_, i) => ({
   x: Math.random() * 100,
   y: Math.random() * 100,
   size: Math.random() * 4 + 2,
-  speed: Math.random() * 2 + 1,
+  speed: Math.random() * 0.3 + 0.1,
   opacity: Math.random() * 0.5 + 0.3
 }));
 
@@ -132,12 +132,12 @@ export default function Home() {
     const animateParticles = () => {
       setParticles(prev => prev.map(particle => ({
         ...particle,
-        y: (particle.y + particle.speed * 0.1) % 100,
-        x: particle.x + Math.sin(Date.now() * 0.001 + particle.id) * 0.1
+        y: (particle.y + particle.speed * 0.01) % 100,
+        x: particle.x + Math.sin(Date.now() * 0.0001 + particle.id) * 0.02
       })));
     };
 
-    const interval = setInterval(animateParticles, 100);
+    const interval = setInterval(animateParticles, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -219,7 +219,7 @@ export default function Home() {
               width: `${particle.size}px`,
               height: `${particle.size}px`,
               opacity: particle.opacity,
-              transform: `translateY(${scrollY * 0.1}px)`
+              transform: `translateY(${scrollY * 0.02}px)`
             }}
           />
         ))}
@@ -279,9 +279,9 @@ export default function Home() {
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 2}s`,
-                transform: `translateY(${scrollY * 0.2}px) rotate(${Math.random() * 360}deg)`
+                animationDelay: `${Math.random() * 10}s`,
+                animationDuration: `${6 + Math.random() * 6}s`,
+                transform: `translateY(${scrollY * 0.02}px) rotate(${Math.random() * 360}deg)`
               }}
             >
               {Math.random() > 0.7 ? ['def', 'import', 'python', 'class', 'if'][Math.floor(Math.random() * 5)] : Math.random() > 0.5 ? '1' : '0'}
@@ -333,9 +333,9 @@ export default function Home() {
                   <span className="text-green-400 mr-2">▶</span>
                   Loading {scriptCategories.length} script categories
                   <div className="ml-2 flex space-x-1">
-                    <div className="w-1 h-1 bg-cyan-400 rounded-full animate-bounce"></div>
-                    <div className="w-1 h-1 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-1 h-1 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-1 h-1 bg-cyan-400 rounded-full animate-bounce" style={{ animationDuration: '1.5s' }}></div>
+                    <div className="w-1 h-1 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.15s', animationDuration: '1.5s' }}></div>
+                    <div className="w-1 h-1 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s', animationDuration: '1.5s' }}></div>
                   </div>
                 </div>
                 <div className="mb-2 flex items-center">
@@ -706,8 +706,8 @@ export default function Home() {
                 top: `${Math.random() * 100}%`,
                 width: `${20 + Math.random() * 60}px`,
                 height: `${20 + Math.random() * 60}px`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 2}s`
+                animationDelay: `${Math.random() * 8}s`,
+                animationDuration: `${4 + Math.random() * 4}s`
               }}
             />
           ))}
