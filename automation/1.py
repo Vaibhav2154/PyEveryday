@@ -4,21 +4,40 @@ from email.message import EmailMessage
 # --- Configuration ---
 EMAIL_ADDRESS = 'vaibhavvaibhu2005@gmail.com'       # Replace with your email
 EMAIL_PASSWORD = ''         # App password or actual password
-SUBJECT = 'ED team interview schedule'
-TEST_LINK = 'https://docs.google.com/spreadsheets/d/1z66pPR8mJHoS9kwVTXpJRIHgvHAea9Dsy6QuusJHCnc/edit?gid=0#gid=00'
+SUBJECT = 'Thank You & Welcome to the Advisory Team - Linux Campus Club (LCC)'
+
+# TODO: Update the advisory role below if needed
+ADVISORY_ROLE = 'Advisory Team'  # Can be customized if there are specific advisory positions
+
 with open('emails.txt', 'r') as file:
     recipients = [line.strip() for line in file if line.strip()]
 
 body = f"""
 Hello,
 
-This is an automated email.
-Please find the interview schedule for the Student coordination team at the following link:
-{TEST_LINK}
+Thank you for your incredible dedication! 🎉
 
-Regards,
-Linux Campus Club
+We are delighted to inform you that you will be continuing with the Linux Campus Club (LCC) as a valued member of our {ADVISORY_ROLE}.
+
+Your experience, knowledge, and contributions have been invaluable to our club, and we are excited to have you guide and mentor the next generation of tech enthusiasts in this new capacity.
+
+
+Next Steps:
+📅 Advisory Team Meeting: We will be organizing a meeting with all advisory team members to discuss your new role, responsibilities, and how we can work together to make LCC even better. Details will be shared soon.
+
+📱 WhatsApp Group: Please stay connected with our official WhatsApp group for ongoing coordination and updates:
+🔗 WhatsApp Group Link: 
+
+The advisory team meeting details including date, time, and venue/platform will be shared with you soon. Please keep an eye on your email and our official communication channels for further updates.
+
+Thank you once again for choosing to stay with LCC and for your commitment to nurturing the next generation of tech enthusiasts. Your continued involvement means a lot to us and to the future members who will benefit from your guidance.
+
+Best regards,
+Linux Campus Club (LCC)
 JSSSTU, Mysuru
+
+---
+For any queries, feel free to reach out to us.
 """
 
 # --- Create the email ---
