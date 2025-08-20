@@ -1,0 +1,9 @@
+fastapi
+pydantic
+sqlmodel
+requests
+beautifulsoup4
+pytube
+Pillow
+cryptography
+uvicorn[standard]
