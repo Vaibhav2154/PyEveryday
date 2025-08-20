@@ -1,5 +1,16 @@
 import type { Metadata } from 'next'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
+
+const jetbrains_mono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+})
 
 export const metadata: Metadata = {
   title: 'PyEveryday - Automate Your Daily Tasks with Python',
@@ -57,19 +68,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${jetbrains_mono.variable}`}>
       <head>
         {/* Additional meta tags for better SEO and performance */}
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="theme-color" content="#3b82f6" />
         
         {/* Preconnect to external domains for better performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://github.com" />
-        
-        {/* Google Fonts */}
-        <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet" />
         
         {/* Favicon and app icons */}
         <link rel="icon" href="/icon.png" />
@@ -104,7 +110,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-inter antialiased">
+      <body className="antialiased">
         {/* Skip to main content for accessibility */}
         <a 
           href="#main-content" 
