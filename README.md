@@ -1,6 +1,5 @@
 [![OSCI-Project-Banner.png](https://i.postimg.cc/76mJvBmF/OSCI-Project-Banner.png)](https://postimg.cc/8JfzMb84)
-<div align="center">  
-  <img src="https://readme-typing-svg.herokuapp.com?color=00ffaa&size=35&width=900&height=80&lines=⚙️+PyEveryday+-+Automate+Your+Everyday+Tasks+with+Python!"/>
+
 
 
 <div align="center">
