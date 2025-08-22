@@ -3,7 +3,6 @@
   <img src="https://readme-typing-svg.herokuapp.com?color=00ffaa&size=35&width=900&height=80&lines=⚙️+PyEveryday+-+Automate+Your+Everyday+Tasks+with+Python!"/>
 
 
-<div align="center">
   
   <h1>🚀 PyEveryday</h1>
   
