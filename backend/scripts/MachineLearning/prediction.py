@@ -10,10 +10,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 
-from pdfminer.high_level import extract_text as pdf_extract_text
-import docx
-from PIL import Image
-import pytesseract
+from backend.scripts.data_tools.data_converter import DataConverter
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -24,11 +21,6 @@ class SalesPredictor:
         self.df = None
 
     # ---------------- Extraction ----------------
-    def read_csv(self, path):
-        df = pd.read_csv(path)
-        logging.info(f"Read CSV {path} with {len(df)} rows")
-        return df
-
     def extract_pdf(self, path):
         text = pdf_extract_text(path)
         logging.info(f"Extracted {len(text)} characters from PDF")
@@ -149,14 +141,16 @@ if __name__ == "__main__":
         print("  pdf <path>")
         print("  docx <path>")
         print("  image <path>")
+        print("  xml <path>")
+        print("  json <path>")
         print("Example: python prediction.py pdf sales.pdf")
         sys.exit(1)
 
     predictor = SalesPredictor()
     command, path = sys.argv[1], sys.argv[2]
 
-    if command == "csv":
-        df = predictor.read_csv(path)
+    if command == "csv" or command == "xml" or command == "json":
+        df = DataConverter.auto_read(path)
     elif command == "pdf":
         text = predictor.extract_pdf(path)
         df = predictor.parse_sales(text)
