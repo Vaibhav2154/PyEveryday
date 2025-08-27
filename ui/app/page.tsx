@@ -557,6 +557,7 @@ export default function Home() {
                       ? "ring-4 ring-cyan-400 scale-105"
                       : ""
                   }`}
+                  // The clipPath style property was removed here as the main fix for the hexagonal border issue described in the PR title.
                   style={{ backgroundImage: category.bgPattern }}
                   onMouseEnter={() => setHoveredCategory(index)}
                   onMouseLeave={() => setHoveredCategory(null)}
