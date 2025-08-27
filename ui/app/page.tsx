@@ -548,9 +548,9 @@ export default function Home() {
               {scriptCategories.map((category, index) => (
                 <div
                   key={index}
-                  className={`group relative mb-[2%] overflow-hidden rounded-2xl bg-gradient-to-br ${
+                  className={`group relative mb-4 overflow-hidden rounded-2xl bg-gradient-to-br ${
                     category.color
-                  } p-6 hover:scale-110 transition-all duration-400 cursor-pointer ${
+                  } p-6 hover:scale-110 transition-all duration-300 cursor-pointer ${
                     category.hoverColor
                   } ${
                     selectedCategory === index
