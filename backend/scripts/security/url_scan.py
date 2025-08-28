@@ -1,86 +1,118 @@
-import os
 import sys
-import argparse
+import re
+import socket
+import whois
+import os
 import requests
-import base64
-import time
-
 from dotenv import load_dotenv
-from pathlib import Path
-env_path = Path(__file__).resolve().parent / ".env"
-load_dotenv(dotenv_path=env_path) 
-api_key = os.getenv("VT_API_KEY")
-print("Loaded API Key:", api_key[:10] + "..." if api_key else "Not found")
+from urllib.parse import urlparse
 
-def scan_url(url: str) -> str:
-    report = []
-    report.append(f"🔎 Scanning URL: {url}")
+load_dotenv()
+VT_API_KEY = os.getenv("VT_API_KEY")
 
-    
-    if url.startswith("https://"):
-        report.append("✅ Uses HTTPS (secure protocol).")
-    else:
-        report.append("⚠️ Does not use HTTPS (insecure protocol).")
+def check_https(url):
+    return url.startswith("https://")
 
-    
-    if "@" in url or url.count("//") > 1:
-        report.append("🚨 Suspicious URL structure detected.")
-    else:
-        report.append("✅ URL structure looks normal.")
+def check_url_structure(url):
+    pattern = re.compile(
+        r'^(https?:\/\/)?'              # http:// or https://
+        r'([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}' # domain
+        r'(\/\S*)?$'                     # optional path
+    )
+    return bool(pattern.match(url))
 
-    
-    api_key = os.getenv("VT_API_KEY", "")
-    if not api_key:
-        report.append("⚠️ VirusTotal check skipped (no API key set).")
-        return "\n".join(report)
+def check_domain_info(domain):
+    try:
+        info = whois.whois(domain)
+        registrar = info.registrar or "Unknown"
+        creation_date = info.creation_date
+
+        # Handle list or single datetime
+        if isinstance(creation_date, list) and creation_date:
+            creation_date = creation_date[0]
+        if hasattr(creation_date, "strftime"):
+            creation_date = creation_date.strftime("%Y-%m-%d")
+        else:
+            creation_date = "Unknown"
+
+        return f"✅ Domain registered: {creation_date} (Registrar: {registrar})"
+    except Exception as e:
+        return f"⚠️ WHOIS lookup failed: {e}"
+
+def check_virustotal(url):
+    if not VT_API_KEY:
+        return "⚠️ VirusTotal API key not found."
+
+    api_url = "https://www.virustotal.com/api/v3/urls"
+    headers = {"x-apikey": VT_API_KEY}
 
     try:
-        headers = {"x-apikey": api_key}
+        # Submit URL for scanning
+        response = requests.post(api_url, headers=headers, data={"url": url})
+        if response.status_code != 200:
+            return f"⚠️ VirusTotal error: {response.status_code}"
 
-        
-        vt_url = "https://www.virustotal.com/api/v3/urls"
-        response = requests.post(vt_url, headers=headers, data={"url": url}, timeout=10)
+        # Get analysis ID
+        analysis_id = response.json()["data"]["id"]
 
-        if response.status_code == 200:
-            url_id = response.json()["data"]["id"]
+        # Fetch analysis results
+        analysis_url = f"https://www.virustotal.com/api/v3/analyses/{analysis_id}"
+        result = requests.get(analysis_url, headers=headers).json()
 
-            
-            time.sleep(2)
+        stats = result["data"]["attributes"]["stats"]
 
-            
-            analysis_url = f"https://www.virustotal.com/api/v3/analyses/{url_id}"
-            analysis_response = requests.get(analysis_url, headers=headers, timeout=10)
-
-            if analysis_response.status_code == 200:
-                stats = analysis_response.json()["data"]["attributes"]["stats"]
-                malicious = stats.get("malicious", 0)
-                suspicious = stats.get("suspicious", 0)
-
-                if malicious > 0 or suspicious > 0:
-                    report.append(f"🚨 VirusTotal: {malicious} malicious, {suspicious} suspicious detections.")
-                else:
-                    report.append("✅ VirusTotal: No malicious detections found.")
-            else:
-                report.append(f"⚠️ Failed to fetch VirusTotal report (HTTP {analysis_response.status_code}).")
+        if stats["malicious"] > 0:
+            return f"❌ VirusTotal: {stats['malicious']} malicious detections found!"
         else:
-            report.append(f"⚠️ Failed to submit URL to VirusTotal (HTTP {response.status_code}).")
-
-    except requests.exceptions.RequestException as e:
-        report.append(f"⚠️ VirusTotal check error: {e}")
-
-    return "\n".join(report)
+            return "✅ VirusTotal: No malicious detections found."
+    except Exception as e:
+        return f"⚠️ VirusTotal check failed: {e}"
 
 
-def main():
-    parser = argparse.ArgumentParser(description="URL Scanner Utility")
-    parser.add_argument("command", choices=["scan"], help="Action to perform")
-    parser.add_argument("url", help="URL to scan")
-    args = parser.parse_args()
+def scan_url(url):
+    parsed = urlparse(url)
+    domain = parsed.netloc or parsed.path
 
-    if args.command == "scan":
-        result = scan_url(args.url)
-        print(result)
+    report_lines = [
+        "=============================================",
+        "          🔎 URL Security Report",
+        "=============================================",
+        f"\n🔎 Scanning URL: {url}\n"
+    ]
 
+    # HTTPS check
+    if check_https(url):
+        report_lines.append("✅ Uses HTTPS (secure protocol).")
+    else:
+        report_lines.append("❌ Does not use HTTPS (insecure).")
+
+    # Structure check
+    if check_url_structure(url):
+        report_lines.append("✅ URL structure looks normal.")
+    else:
+        report_lines.append("❌ Suspicious-looking URL structure.")
+
+    # Domain WHOIS
+    report_lines.append(check_domain_info(domain))
+
+    # VirusTotal
+    report_lines.append(check_virustotal(url))
+
+    # Final status
+    report_lines.append("\n=============================================")
+    if any("❌" in line for line in report_lines):
+        report_lines.append("📊 Overall Status: UNSAFE 🔴")
+    elif any("⚠️" in line for line in report_lines):
+        report_lines.append("📊 Overall Status: SAFE (Unverified) 🟡")
+    else:
+        report_lines.append("📊 Overall Status: SAFE 🟢")
+    report_lines.append("=============================================")
+
+    return "\n".join(report_lines)
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) != 2:
+        print("Usage: python url_scan.py <url>")
+    else:
+        url = sys.argv[1]
+        print(scan_url(url))
