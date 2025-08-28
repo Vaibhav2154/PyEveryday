@@ -5,6 +5,12 @@ import requests
 import base64
 import time
 
+from dotenv import load_dotenv
+from pathlib import Path
+env_path = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=env_path) 
+api_key = os.getenv("VT_API_KEY")
+print("Loaded API Key:", api_key[:10] + "..." if api_key else "Not found")
 
 def scan_url(url: str) -> str:
     report = []
