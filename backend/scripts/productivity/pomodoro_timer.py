@@ -1,8 +1,24 @@
+def dashboard_summary():
+    # Show completed sessions today
+    try:
+        stats_file = "pomodoro_stats.json"
+        import json, datetime
+        today = datetime.date.today().isoformat()
+        if not os.path.exists(stats_file):
+            return "No pomodoro sessions yet."
+        with open(stats_file, 'r') as f:
+            data = json.load(f)
+        today_sessions = [s for s in data if s.get('date') == today]
+        return f"Sessions today: {len(today_sessions)}"
+    except Exception:
+        return "No pomodoro stats available."
+
 import time
 import datetime
 import sys
 import threading
 import os
+import argparse
 
 class PomodoroTimer:
     def __init__(self, work_duration=25, break_duration=5, long_break_duration=15):
@@ -146,28 +162,42 @@ def interactive_mode():
         else:
             print("Unknown command")
 
+
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        command = sys.argv[1].lower()
-        timer = PomodoroTimer()
-        
-        if command == "work":
+    parser = argparse.ArgumentParser(description="Pomodoro Timer")
+    parser.add_argument('--work', type=int, help='Work session duration in minutes')
+    parser.add_argument('--break', dest='break_', type=int, help='Short break duration in minutes')
+    parser.add_argument('--long-break', type=int, help='Long break duration in minutes')
+    parser.add_argument('--session', choices=['work', 'break'], help='Start a work or break session immediately')
+    parser.add_argument('--stats', action='store_true', help='Show Pomodoro statistics')
+    parser.add_argument('--reset', action='store_true', help='Reset session count')
+    parser.add_argument('--interactive', action='store_true', help='Start in interactive mode')
+    args = parser.parse_args()
+
+    # If any CLI flag is used, run in CLI mode
+    if any([args.work, args.break_, args.long_break, args.session, args.stats, args.reset]) and not args.interactive:
+        timer = PomodoroTimer(
+            work_duration=args.work if args.work else 25,
+            break_duration=args.break_ if args.break_ else 5,
+            long_break_duration=args.long_break if args.long_break else 15
+        )
+        if args.session == 'work':
             thread = timer.start_work_session()
             if thread:
                 try:
                     thread.join()
                 except KeyboardInterrupt:
                     timer.stop()
-        
-        elif command == "break":
+        elif args.session == 'break':
             thread = timer.start_break()
             if thread:
                 try:
                     thread.join()
                 except KeyboardInterrupt:
                     timer.stop()
-        
-        else:
-            print("Usage: python pomodoro_timer.py [work|break]")
+        if args.stats:
+            timer.get_stats()
+        if args.reset:
+            timer.reset_sessions()
     else:
         interactive_mode()

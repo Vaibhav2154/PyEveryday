@@ -1,3 +1,13 @@
+def dashboard_summary():
+    mgr = ReminderManager()
+    active = [r for r in mgr.reminders if r.active]
+    if not active:
+        return "No active reminders."
+    msg = f"Active reminders: {len(active)}"
+    next_rem = min(active, key=lambda r: r.reminder_time, default=None)
+    if next_rem:
+        msg += f"\nNext: {next_rem.message} at {next_rem.reminder_time.strftime('%Y-%m-%d %H:%M')}"
+    return msg
 import datetime
 import time
 import json
@@ -167,51 +177,38 @@ def create_quick_reminders():
     
     print("Quick reminders created!")
 
+
 if __name__ == "__main__":
+    import argparse
     import sys
-    
+    parser = argparse.ArgumentParser(description="Reminder System")
+    parser.add_argument('--add', nargs=2, metavar=('MESSAGE', 'TIME'), help='Add a new reminder. TIME format: HH:MM or YYYY-MM-DDTHH:MM')
+    parser.add_argument('--repeat', help='Repeat interval for the reminder (e.g., 30m, 1h)')
+    parser.add_argument('--list', action='store_true', help='List all reminders')
+    parser.add_argument('--remove', metavar='REMINDER_ID', help='Remove a reminder by ID')
+    parser.add_argument('--monitor', action='store_true', help='Start monitoring reminders')
+    parser.add_argument('--quick', action='store_true', help='Create quick reminders')
+    parser.add_argument('--interactive', action='store_true', help='Start in interactive mode')
+    args = parser.parse_args()
+
     manager = ReminderManager()
-    
-    if len(sys.argv) < 2:
-        print("Usage: python reminder_system.py <command> [args]")
-        print("Commands: add, list, remove, monitor, quick")
-        sys.exit(1)
-    
-    command = sys.argv[1]
-    
-    if command == "add":
-        if len(sys.argv) < 4:
-            print("Usage: add <message> <time> [repeat_interval]")
-            print("Time format: HH:MM or YYYY-MM-DDTHH:MM")
-            sys.exit(1)
-        
-        message = sys.argv[2]
-        time_str = sys.argv[3]
-        repeat_interval = sys.argv[4] if len(sys.argv) > 4 else None
-        
+
+    if args.add:
+        message, time_str = args.add
+        repeat_interval = args.repeat
         reminder_time = manager.parse_time_string(time_str)
         if reminder_time:
             repeat = repeat_interval is not None
             manager.add_reminder(message, reminder_time, repeat, repeat_interval)
         else:
             print("Invalid time format")
-    
-    elif command == "list":
+    elif args.list:
         manager.list_reminders()
-    
-    elif command == "remove":
-        if len(sys.argv) < 3:
-            print("Usage: remove <reminder_id>")
-            sys.exit(1)
-        
-        reminder_id = sys.argv[2]
-        manager.remove_reminder(reminder_id)
-    
-    elif command == "monitor":
+    elif args.remove:
+        manager.remove_reminder(args.remove)
+    elif args.monitor:
         manager.start_monitoring()
-    
-    elif command == "quick":
+    elif args.quick:
         create_quick_reminders()
-    
-    else:
-        print("Unknown command")
+    elif args.interactive or len(sys.argv) == 1:
+        print("Usage: python reminder_system.py --add MESSAGE TIME [--repeat INTERVAL] | --list | --remove REMINDER_ID | --monitor | --quick | --interactive")

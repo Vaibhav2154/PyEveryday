@@ -1,3 +1,16 @@
+def dashboard_summary():
+    tracker = TimeTracker()
+    today = datetime.date.today().isoformat()
+    today_acts = [a for a in tracker.activities if a.date == today]
+    total_sec = sum(a.duration for a in today_acts)
+    if not today_acts:
+        return "No time tracked today."
+    last = max(today_acts, key=lambda a: a.end_time or 0)
+    h = int(total_sec // 3600)
+    m = int((total_sec % 3600) // 60)
+    msg = f"Total today: {h:02d}:{m:02d}"
+    msg += f"\nLast: {last.name} ({last.category})"
+    return msg
 import time
 import json
 import datetime
@@ -207,43 +220,36 @@ class TimeTracker:
         else:
             print("No categories found")
 
+
 if __name__ == "__main__":
+    import argparse
     import sys
-    
+    parser = argparse.ArgumentParser(description="Time Tracker")
+    parser.add_argument('--start', nargs='+', metavar=('ACTIVITY', 'CATEGORY'), help='Start a new activity. Usage: --start <activity> [category]')
+    parser.add_argument('--stop', action='store_true', help='Stop the current activity')
+    parser.add_argument('--summary', nargs='?', const='', metavar='DATE', help='Show daily summary for DATE (YYYY-MM-DD), or today if not provided')
+    parser.add_argument('--weekly', action='store_true', help='Show weekly summary')
+    parser.add_argument('--report', type=int, metavar='DAYS', help='Generate report for the last DAYS (default 7)')
+    parser.add_argument('--categories', action='store_true', help='List all categories')
+    parser.add_argument('--interactive', action='store_true', help='Start in interactive mode')
+    args = parser.parse_args()
+
     tracker = TimeTracker()
-    
-    if len(sys.argv) < 2:
-        print("Usage: python time_tracker.py <command> [args]")
-        print("Commands: start, stop, summary, weekly, report, categories")
-        sys.exit(1)
-    
-    command = sys.argv[1]
-    
-    if command == "start":
-        if len(sys.argv) < 3:
-            print("Usage: start <activity_name> [category]")
-            sys.exit(1)
-        
-        name = sys.argv[2]
-        category = sys.argv[3] if len(sys.argv) > 3 else "General"
+
+    if args.start:
+        name = args.start[0]
+        category = args.start[1] if len(args.start) > 1 else "General"
         tracker.start_activity(name, category)
-    
-    elif command == "stop":
+    elif args.stop:
         tracker.stop_current_activity()
-    
-    elif command == "summary":
-        date = sys.argv[2] if len(sys.argv) > 2 else None
+    elif args.summary is not None:
+        date = args.summary if args.summary else None
         tracker.get_daily_summary(date)
-    
-    elif command == "weekly":
+    elif args.weekly:
         tracker.get_weekly_summary()
-    
-    elif command == "report":
-        days = int(sys.argv[2]) if len(sys.argv) > 2 else 7
-        tracker.generate_report(days)
-    
-    elif command == "categories":
+    elif args.report is not None:
+        tracker.generate_report(args.report)
+    elif args.categories:
         tracker.list_categories()
-    
-    else:
-        print("Unknown command")
+    elif args.interactive or len(sys.argv) == 1:
+        print("Usage: python time_tracker.py --start ACTIVITY [CATEGORY] | --stop | --summary [DATE] | --weekly | --report DAYS | --categories | --interactive")

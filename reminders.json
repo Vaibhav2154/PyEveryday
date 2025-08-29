@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1756456580098",
+    "message": "Meeting",
+    "reminder_time": "2025-08-29T15:00:00",
+    "repeat": true,
+    "repeat_interval": "1h",
+    "active": true
+  },
+  {
+    "id": "1756461365089",
+    "message": "Doctor appointment",
+    "reminder_time": "2025-08-30T10:00:00",
+    "repeat": true,
+    "repeat_interval": "1d",
+    "active": true
+  }
+]
