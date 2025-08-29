@@ -1,3 +1,14 @@
+def dashboard_summary():
+    mgr = TodoManager()
+    total = len(mgr.todos)
+    pending = [t for t in mgr.todos if not t.completed]
+    if not mgr.todos:
+        return "No todos."
+    msg = f"Total: {total}, Pending: {len(pending)}"
+    next_due = min((t for t in pending if t.due_date), key=lambda t: t.due_date, default=None)
+    if next_due:
+        msg += f"\nNext due: {next_due.task} (by {next_due.due_date})"
+    return msg
 import json
 import os
 import datetime
@@ -90,50 +101,38 @@ class TodoManager:
         today_tasks = [todo for todo in self.todos if todo.due_date == today and not todo.completed]
         return today_tasks
 
+
 if __name__ == "__main__":
+    import argparse
     import sys
-    
+    parser = argparse.ArgumentParser(description="Todo Manager")
+    parser.add_argument('--add', nargs='+', help='Add a new task. Usage: --add <task> [priority] [due_date]')
+    parser.add_argument('--priority', choices=['LOW', 'MEDIUM', 'HIGH'], help='Priority for the new task')
+    parser.add_argument('--due', help='Due date for the new task (YYYY-MM-DD)')
+    parser.add_argument('--list', action='store_true', help='List all pending tasks')
+    parser.add_argument('--list-all', action='store_true', help='List all tasks including completed')
+    parser.add_argument('--complete', type=int, help='Mark a task as completed by index')
+    parser.add_argument('--remove', type=int, help='Remove a task by index')
+    parser.add_argument('--today', action='store_true', help="Show today's tasks")
+    parser.add_argument('--interactive', action='store_true', help='Start in interactive mode')
+    args = parser.parse_args()
+
     manager = TodoManager()
-    
-    if len(sys.argv) < 2:
-        print("Usage: python todo_manager.py <command> [args]")
-        print("Commands: add, list, complete, remove, today")
-        sys.exit(1)
-    
-    command = sys.argv[1]
-    
-    if command == "add":
-        if len(sys.argv) < 3:
-            print("Usage: add <task> [priority] [due_date]")
-            sys.exit(1)
-        
-        task = sys.argv[2]
-        priority = Priority[sys.argv[3].upper()] if len(sys.argv) > 3 else Priority.MEDIUM
-        due_date = sys.argv[4] if len(sys.argv) > 4 else None
-        
+
+    if args.add:
+        task = ' '.join(args.add)
+        priority = Priority[args.priority.upper()] if args.priority else Priority.MEDIUM
+        due_date = args.due if args.due else None
         manager.add_task(task, priority, due_date)
-    
-    elif command == "list":
-        show_completed = len(sys.argv) > 2 and sys.argv[2] == "all"
-        manager.list_tasks(show_completed)
-    
-    elif command == "complete":
-        if len(sys.argv) < 3:
-            print("Usage: complete <index>")
-            sys.exit(1)
-        
-        index = int(sys.argv[2])
-        manager.complete_task(index)
-    
-    elif command == "remove":
-        if len(sys.argv) < 3:
-            print("Usage: remove <index>")
-            sys.exit(1)
-        
-        index = int(sys.argv[2])
-        manager.remove_task(index)
-    
-    elif command == "today":
+    elif args.list:
+        manager.list_tasks(show_completed=False)
+    elif args.list_all:
+        manager.list_tasks(show_completed=True)
+    elif args.complete is not None:
+        manager.complete_task(args.complete)
+    elif args.remove is not None:
+        manager.remove_task(args.remove)
+    elif args.today:
         today_tasks = manager.get_today_tasks()
         if today_tasks:
             print("Today's tasks:")
@@ -141,6 +140,6 @@ if __name__ == "__main__":
                 print(f"{i}: {task.task}")
         else:
             print("No tasks due today")
-    
-    else:
-        print("Unknown command")
+    elif args.interactive or len(sys.argv) == 1:
+        # Fallback to original prompt-based usage if no CLI args
+        print("Usage: python todo_manager.py --add <task> [--priority PRIORITY] [--due YYYY-MM-DD] | --list | --list-all | --complete INDEX | --remove INDEX | --today | --interactive")
