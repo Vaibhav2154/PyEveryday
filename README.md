@@ -115,6 +115,17 @@ PyEveryday uses a modern full-stack architecture:
 
 ---
 
+## 🏁 Getting Started
+
+### Prerequisites
+- Python 3.9 or above installed
+
+### Installation
+```bash
+git clone https://github.com/Vaibhav2154/PyEveryday.git
+cd PyEveryday
+pip install -r requirements.txt
+
 ## 🚀 Quick Start
 
 ### 🌐 Use Online (Recommended)
