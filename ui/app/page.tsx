@@ -84,7 +84,7 @@ const scriptCategories = [
     emoji: "🔐",
     name: "Security",
     description: "Your digital fortress guardian",
-    scripts: ["Password Checker"],
+    scripts: ["Password Checker","File Encryptor"],
     color: "from-red-400 to-pink-600",
     hoverColor: "hover:from-red-500 hover:to-pink-700",
     bgPattern:
