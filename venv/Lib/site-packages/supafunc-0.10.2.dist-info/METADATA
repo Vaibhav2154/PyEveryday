@@ -1,0 +1,38 @@
+Metadata-Version: 2.3
+Name: supafunc
+Version: 0.10.2
+Summary: Library for Supabase Functions
+License: MIT
+Author: Joel Lee
+Author-email: joel@joellee.org
+Requires-Python: >=3.9,<4.0
+Classifier: Development Status :: 7 - Inactive
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Requires-Dist: httpx[http2] (>=0.26,<0.29)
+Requires-Dist: strenum (>=0.4.15,<0.5.0)
+Project-URL: Repository, https://github.com/supabase/functions-py
+Description-Content-Type: text/markdown
+
+# ⚠️⚠️⚠️ Deprecation notice ⚠️⚠️⚠️ 
+
+The `supafunc` package name is deprecated and is not going to receive any more updates. Please, use `supabase_functions` instead.
+
+## How to switch
+
+1. Use `uv add supabase_functions` instead of `uv add supafunc`.
+2. Replace `supafunc` with `supabase_functions` in your `requirements.txt`, `pyproject.toml`, `setup.py`, etc.
+3. Replace all imports `from supafunc import ...` to `from supabase_functions import ...`
+4. If `supafunc` is still used by one of your dependencies, consider reporting it in their issue tracker.
+
+## Reasoning
+
+The `supafunc` package has been replaced by the `supabase_functions` since December 14th, 2024, following the JavaScript implementation name switch. Changes and fixes were maintained for a couple of months by pushing them in both packages at the same time, using a patching script.
+
+In order to simplify maintenance and development of new features, the `supafunc` package is going to cease receiving updates as of 7th of August 2025, and going forward everyone should use `supabase_functions` instead.
+
