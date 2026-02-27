@@ -172,3 +172,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Compression tool logs/config
+compress_config.json
+compression_log.json
+.env
