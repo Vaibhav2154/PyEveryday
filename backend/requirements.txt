@@ -18,3 +18,4 @@ SQLAlchemy==2.0.43
 sqlmodel==0.0.24
 watchdog==6.0.0
 yt_dlp==2025.8.22
+cryptography==46.0.2
