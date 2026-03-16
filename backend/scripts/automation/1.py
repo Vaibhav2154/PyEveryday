@@ -1,9 +1,13 @@
 import smtplib
 from email.message import EmailMessage
+# Importing load_dotenv to manage environment variables
+from dotenv import load_dotenv
+import os
 
-# --- Configuration ---
-EMAIL_ADDRESS = 'vaibhavvaibhu2005@gmail.com'       # Replace with your email
-EMAIL_PASSWORD = ''         # App password or actual password
+load_dotenv()  # Load from .env file
+
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 SUBJECT = 'Thank You & Welcome to the Advisory Team - Linux Campus Club (LCC)'
 
 # TODO: Update the advisory role below if needed
